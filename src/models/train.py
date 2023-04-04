@@ -1,9 +1,11 @@
+import numpy as np
 from tqdm import tqdm
 import torch
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import roc_auc_score
+from transformers import PreTrainedModel
 
 
-def train_loop(dataloader, model, classifier, loss_fn, optimizer):
+def train_loop(dataloader, model: PreTrainedModel, classifier, loss_fn, optimizer):
     size = len(dataloader.dataset)
     for batch, (X, y) in tqdm(enumerate(dataloader)):
         # Compute prediction and loss
@@ -24,20 +26,20 @@ def train_loop(dataloader, model, classifier, loss_fn, optimizer):
 def test_loop(dataloader, model, classifier, loss_fn):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
-    test_loss, correct = 0, 0
+    test_loss, correct = 0, np.zeros(6)
 
     with torch.no_grad():
         for X, y in tqdm(dataloader):
             embed = model(X).last_hidden_state[:, 0]
             pred = classifier(embed)
             test_loss += loss_fn(pred, y).item()
-            correct += accuracy_score(y.cpu().numpy(),
-                                      logits_to_labels(pred).cpu().numpy())
+            correct += (y == logits_to_probability(pred).round()
+                        ).cpu().numpy().sum(axis=0)
     test_loss /= num_batches
     correct /= size
     print(
-        f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+        f"Test Error: \n Accuracy: {correct}, Avg loss: {test_loss:>8f} \n")
 
 
-def logits_to_labels(logits):
-    return torch.sigmoid(logits).round()
+def logits_to_probability(logits):
+    return torch.sigmoid(logits)

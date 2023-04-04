@@ -5,11 +5,14 @@ import torch
 class Classifier(nn.Module):
     def __init__(self, input_dim, device: torch.device) -> None:
         super().__init__()
+        self.device = device
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(input_dim, 512),
             nn.ReLU(),
+            nn.Dropout(0.2),
             nn.Linear(512, 512),
             nn.ReLU(),
+            nn.Dropout(0.1),
             nn.Linear(512, 6),
         )
 

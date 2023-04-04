@@ -8,7 +8,7 @@ class Processor:
         self.device = device
 
     def extract_target(self, df):
-        return torch.Tensor(df[self.labels], device=self.device)
+        return torch.Tensor(df[self.labels].to_numpy()).to(self.device)
 
     def tokenize_data(self, df) -> torch.Tensor:
         return (self.tokenizer(list(df["comment_text"]),
