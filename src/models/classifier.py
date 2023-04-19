@@ -8,11 +8,10 @@ class Classifier(nn.Module):
         self.device = device
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(input_dim, 512),
-            nn.ReLU(),
+            nn.SELU(),
             nn.Dropout(0.2),
-            nn.Linear(512, 512),
-            nn.ReLU(),
-            nn.Dropout(0.1),
+            nn.SELU(),
+            nn.Dropout(0.2),
             nn.Linear(512, 6),
         )
 

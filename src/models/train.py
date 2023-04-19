@@ -18,7 +18,7 @@ def train_loop(dataloader, model: PreTrainedModel, classifier, loss_fn, optimize
         loss.backward()
         optimizer.step()
 
-        if batch % 512 == 0:
+        if batch % 32 == 0:
             loss, current = loss.item(), (batch + 1) * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 

@@ -5,7 +5,8 @@ __pycache__/
 .vscode
 # C extensions
 *.so
-
+*embeddings.csv
+/*.csv
 # Distribution / packaging
 .Python
 build/
